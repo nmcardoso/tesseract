@@ -47,6 +47,11 @@ def write_log(path, content):
   with open(path, 'a') as file:
     file.write('%s\n' % content)
 
+def write_time_log(quantity, time):
+  time_log = '%s follows in %s seconds with %s DELAY_BETWEEN and %s DELAY_END' \
+              % (quantity, time, DELAY_BETWEEN, DELAY_END)
+  write_log('time.log', time_log)
+
 def determined_iteration(cookies, uid_start, uid_end):
   start_time = time.time()
 
