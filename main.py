@@ -40,6 +40,9 @@ def get_file_lines(path):
 
   return data
 
+def get_last_uid():
+  return int(subprocess.check_output(['tail', '-1', 'uid.log']))
+
 def write_log(path, content):
   with open(path, 'a') as file:
     file.write('%s\n' % content)
@@ -118,12 +121,17 @@ def get_args():
 def main():
   args = get_args()
   cookies = get_file_content('cookies.txt')
+  attempt = 1
+  max_attempts = 11
 
   if (args.auto):
-    last_uid = int(subprocess.check_output(['tail', '-1', 'uid.log']))
-
     if (not args.q):
-      undetermined_iteration(cookies, last_uid + 1)
+      try:
+        undetermined_iteration(cookies, get_last_uid() + 1)
+      finally:
+        if (attempt < max_attempts):
+          attempt += 1
+          undetermined_iteration(cookies, get_last_uid() + 1)
     else:
       determined_iteration(cookies, (last_uid + 1), (last_uid + args.q[0]))
   else:
