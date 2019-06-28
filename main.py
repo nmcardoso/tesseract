@@ -84,29 +84,37 @@ def determined_iteration(cookies, uid_start, uid_end):
   print('Execution time: %s' % (end_time - start_time))
 
 def undetermined_iteration(cookies, uid_start):
-  current = 0
+  current = 1
   uid = uid_start
+  start_time = time.time()
 
-  while(True):
-    follow_resp = send_api_request(cookies, str(uid), 'follow')
-    if (follow_resp.json()['msg'] == 'success'):
-      print('User %d followed' % uid)
-    else:
-      print('Error! Response: %s' % follow_resp.text)
+  try:
+    while(True):
+      follow_resp = send_api_request(cookies, str(uid), 'follow')
+      if (follow_resp.json()['msg'] == 'success'):
+        print('User %d followed' % uid)
+      else:
+        print('Error! Response: %s' % follow_resp.text)
 
-    time.sleep(DELAY_BETWEEN)
+      time.sleep(DELAY_BETWEEN)
 
-    unfollow_resp = send_api_request(cookies, str(uid), 'unfollow')
-    if (unfollow_resp.json()['msg'] == 'success'):
-      write_log('uid.log', str(uid))
-      print('User %d unfollowed' % uid)
-    else:
-      print('Error! Response: %s' % follow_resp.text)
+      unfollow_resp = send_api_request(cookies, str(uid), 'unfollow')
+      if (unfollow_resp.json()['msg'] == 'success'):
+        write_log('uid.log', str(uid))
+        print('User %d unfollowed' % uid)
+      else:
+        print('Error! Response: %s' % follow_resp.text)
 
-    print('%d follows completed' % current, remaining)
-    time.sleep(DELAY_END)
-    current += 1
-    uid += 1
+      print('%d follows completed' % current)
+      time.sleep(DELAY_END)
+      current += 1
+      uid += 1
+  except KeyboardInterrupt:
+    end_time = time.time()
+    time_log = '%s follows in %s seconds with %s DELAY_BETWEEN and %s DELAY_END' \
+              % (current, (end_time - start_time), DELAY_BETWEEN, DELAY_END)
+    write_log('time.log', time_log)
+    print('Execution time: %s' % (end_time - start_time))
 
 def get_args():
   parser = argparse.ArgumentParser(description='Follows multiplier')
