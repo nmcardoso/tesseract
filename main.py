@@ -128,6 +128,12 @@ def get_args():
   parser.add_argument('-q', nargs=1, type=int, 
                       help='''Quantity of follows requests, starting with 
                               the value inside uid.log + 1''')
+  parser.add_argument('-t', '--time', nargs=1, type=int,
+                      help='Delay time (in ms) for both delays')
+  parser.add_argument('-b', '--time-between', nargs=1, type=int,
+                      help='Delay time (in ms) between follow and unfollow')
+  parser.add_argument('-e', '--time-end', nargs=1, type=int,
+                      help='Delay time (in ms) after unfollow')
   return parser.parse_args()
 
 def print_status(n, uid, follow=False, unfollow=False):
@@ -148,6 +154,17 @@ def main():
   cookies = get_file_content('cookies.txt')
   attempt = 1
   max_attempts = 11
+  global DELAY_BETWEEN
+  global DELAY_END
+
+  if (args.time):
+    DELAY_BETWEEN = args.time[0] / 1000
+    DELAY_END = args.time[0] / 1000
+  else:
+    if (args.time_between):
+      DELAY_BETWEEN = args.time_between[0] / 1000
+    if (args.time_end):
+      DELAY_END = args.time_end[0] / 1000
 
   if (args.auto):
     if (not args.q):
