@@ -158,7 +158,7 @@ def main():
           attempt += 1
           undetermined_iteration(cookies, get_last_uid() + 1)
     else:
-      determined_iteration(cookies, (last_uid + 1), (last_uid + args.q[0]))
+      determined_iteration(cookies, (get_last_uid() + 1), (get_last_uid() + args.q[0]))
   else:
     uid_range = get_file_lines('uid.txt')
     uid_start = int(uid_range[0])
