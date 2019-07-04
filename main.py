@@ -61,7 +61,7 @@ def determined_iteration(cookies, uid_start, uid_end):
 
     follow_resp = send_api_request(cookies, str(uid), 'follow')
     if (follow_resp.json()['msg'] == 'success'):
-      print('User %d followed' % uid)
+      print_status(current, uid, True)
     else:
       print('Error! Response: %s' % follow_resp.text)
 
@@ -71,7 +71,7 @@ def determined_iteration(cookies, uid_start, uid_end):
     unfollow_resp = send_api_request(cookies, str(uid), 'unfollow')
     if (unfollow_resp.json()['msg'] == 'success'):
       write_log('uid.log', str(uid))
-      print('User %d unfollowed' % uid)
+      print_status(current, uid, True, True)
     else:
       print('Error! Response: %s' % unfollow_resp.text)
 
@@ -97,7 +97,7 @@ def undetermined_iteration(cookies, uid_start):
     while(True):
       follow_resp = send_api_request(cookies, str(uid), 'follow')
       if (follow_resp.json()['msg'] == 'success'):
-        print('User %d followed' % uid)
+        print_status(current, uid, True)
       else:
         print('Error! Response: %s' % follow_resp.text)
 
@@ -106,11 +106,10 @@ def undetermined_iteration(cookies, uid_start):
       unfollow_resp = send_api_request(cookies, str(uid), 'unfollow')
       if (unfollow_resp.json()['msg'] == 'success'):
         write_log('uid.log', str(uid))
-        print('User %d unfollowed' % uid)
+        print_status(current, uid, True, True)
       else:
         print('Error! Response: %s' % follow_resp.text)
 
-      print('%d follows completed' % current)
       time.sleep(DELAY_END)
       current += 1
       uid += 1
@@ -130,6 +129,19 @@ def get_args():
                       help='''Quantity of follows requests, starting with 
                               the value inside uid.log + 1''')
   return parser.parse_args()
+
+def print_status(n, uid, follow=False, unfollow=False):
+  bold = '\033[1m'
+  green = '\033[1;32m'
+  blue = '\033[34m'
+  yellow = '\033[33m'
+  ret = '\033[0m'
+  check = '\u2714'
+  if(follow and unfollow):
+    print(f'[{green}#{n}{ret}]\t{bold}ID:{ret}{uid}\t{blue}{check} Follow{ret}\t{yellow}{check} Unfollow{ret}')
+  elif (follow):
+    print(f'[{green}#{n}{ret}]\t{bold}ID:{ret}{uid}\t{blue}{check} Follow{ret}', end='\r')
+  return
 
 def main():
   args = get_args()
